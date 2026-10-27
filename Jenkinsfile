@@ -29,7 +29,7 @@ pipeline {
                 bat 'docker build -t devops-cicd-app:1.0 .'
             }
         }
-        
+
         stage('Import Image into Kubernetes') {
             steps {
                 bat 'docker save -o devops-cicd-app.tar devops-cicd-app:1.0'
@@ -37,19 +37,25 @@ pipeline {
             }
         }
 
-       stage('Check Kubernetes Configuration') {
-    steps {
-        bat 'echo KUBECONFIG=%KUBECONFIG%'
-        bat 'kubectl config current-context'
-        bat 'kubectl config view --minify -o jsonpath={.clusters[0].cluster.server}'
-    }
-}
+        stage('Check Kubernetes Configuration') {
+            steps {
+                bat 'echo KUBECONFIG=%KUBECONFIG%'
+                bat 'kubectl config current-context'
+                bat 'kubectl config view --minify -o jsonpath={.clusters[0].cluster.server}'
+            }
+        }
 
+        stage('Deploy to Kubernetes') {
+            steps {
+                bat 'kubectl rollout restart deployment/devops-app'
+                bat 'kubectl rollout status deployment/devops-app --timeout=120s'
+            }
+        }
     }
 
     post {
         success {
-            echo 'Build and Docker image creation completed!'
+            echo 'Build, Docker image creation, and Kubernetes deployment completed!'
         }
         failure {
             echo 'Pipeline failed. Check the console output.'
