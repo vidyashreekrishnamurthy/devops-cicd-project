@@ -29,6 +29,21 @@ pipeline {
                 bat 'docker build -t devops-cicd-app:1.0 .'
             }
         }
+        
+        stage('Import Image into Kubernetes') {
+            steps {
+                bat 'docker save -o devops-cicd-app.tar devops-cicd-app:1.0'
+                bat 'docker exec -i desktop-control-plane ctr -n k8s.io images import - < devops-cicd-app.tar'
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                bat 'kubectl rollout restart deployment/devops-app'
+                bat 'kubectl rollout status deployment/devops-app --timeout=120s'
+            }
+        }
+
     }
 
     post {
