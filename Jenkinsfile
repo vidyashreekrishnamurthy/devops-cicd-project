@@ -37,12 +37,13 @@ pipeline {
             }
         }
 
-        stage('Deploy to Kubernetes') {
-            steps {
-                bat 'kubectl rollout restart deployment/devops-app'
-                bat 'kubectl rollout status deployment/devops-app --timeout=120s'
-            }
-        }
+       stage('Check Kubernetes Configuration') {
+    steps {
+        bat 'echo KUBECONFIG=%KUBECONFIG%'
+        bat 'kubectl config current-context'
+        bat 'kubectl config view --minify -o jsonpath={.clusters[0].cluster.server}'
+    }
+}
 
     }
 
