@@ -1,0 +1,10 @@
+
+flowchart TD
+    A[GitHub Repository] --> B[Jenkins CI/CD Pipeline]
+    B --> C[Maven Build]
+    C --> D[ROOT.war]
+    D --> E[AWS S3 Artifact Storage]
+    D --> F[Docker Image Build]
+    F --> G[Kubernetes Deployment]
+    G --> H[Running Java Web Application]
+    I[Terraform] -. provisions .-> E

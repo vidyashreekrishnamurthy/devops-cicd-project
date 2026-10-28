@@ -2,3 +2,4 @@ target/
 .idea/
 .vscode/
 *.logdevops-cicd-app.tar
+devops-cicd-app.tar

@@ -25,6 +25,27 @@ pipeline {
             }
         }
 
+        stage('Upload WAR to S3') {
+            steps {
+                withCredentials([
+                    string(
+                        credentialsId: 'aws-access-key-id',
+                        variable: 'AWS_ACCESS_KEY_ID'
+                    ),
+                    string(
+                        credentialsId: 'aws-secret-access-key',
+                        variable: 'AWS_SECRET_ACCESS_KEY'
+                    )
+                ]) {
+                    withEnv(['AWS_DEFAULT_REGION=ap-south-1']) {
+                        bat '''
+                            "C:\\Program Files\\Amazon\\AWSCLIV2\\aws.exe" s3 cp target\\ROOT.war s3://devops-cicd-artifacts-vidya-20261028/artifacts/ROOT.war
+                        '''
+                    }
+                }
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 bat 'docker build -t devops-cicd-app:1.0 .'
