@@ -1,0 +1,36 @@
+---
+- name: Monitor DevOps Project
+  hosts: local
+  gather_facts: false
+
+  tasks:
+    - name: Get application container information
+      community.docker.docker_container_info:
+        name: devops-app-v2
+      register: app_info
+
+    - name: Verify application container is running
+      ansible.builtin.assert:
+        that:
+          - app_info.container.State.Running
+        fail_msg: "Application container is not running!"
+        success_msg: "Application container is running."
+
+    - name: Check application HTTP response
+      ansible.builtin.uri:
+        url: http://localhost:8083/employees
+        method: GET
+        status_code: 200
+
+    - name: Get PostgreSQL container information
+      community.docker.docker_container_info:
+        name: devops-postgres
+      register: db_info
+
+    - name: Verify PostgreSQL health
+      ansible.builtin.assert:
+        that:
+          - db_info.container.State.Running
+          - db_info.container.State.Health.Status == "healthy"
+        fail_msg: "PostgreSQL is not healthy!"
+        success_msg: "PostgreSQL is running and healthy."

@@ -1,5 +1,7 @@
 target/
 .idea/
 .vscode/
-*.logdevops-cicd-app.tar
+*.log
 devops-cicd-app.tar
+
+database/.env
