@@ -11,25 +11,25 @@ The application supports employee record creation and retrieval using PostgreSQL
 ## Architecture
 
 ```mermaid
+
 flowchart TD
-    A[GitHub Repository] --> B[Jenkins CI/CD]
+    A[GitHub Repository] --> B[Jenkins CI/CD Pipeline]
     B --> C[Maven Build]
     C --> D[ROOT.war]
-    D --> E[Docker Image]
+    D --> E[Docker Image Build]
     E --> F[Kubernetes Deployment]
     F --> G[Java Employee Application]
-    G --> H[PostgreSQL Database]
+    G <--> H[PostgreSQL Database]
 
-    I[Ansible] --> J[Container Health Checks]
-    J --> E
+    I[Ansible Automation] --> J[Container Health Checks]
+    J --> G
     J --> H
 
     K[cAdvisor] --> L[Prometheus]
-    L --> M[Grafana Dashboards & Alerts]
+    L --> M[Grafana Dashboards and Alerts]
 
-    N[Terraform] --> O[AWS S3]
-    D --> O
-```
+    N[Future Integration: Terraform] -.-> O[Future Integration: AWS S3]
+
 
 ## Technologies Used
 
