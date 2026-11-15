@@ -16,6 +16,3 @@ monitoring/.env
 # Java build files
 *.class
 
-# Private keys
-*.pem
-*.key
