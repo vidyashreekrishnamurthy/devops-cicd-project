@@ -7,3 +7,15 @@ devops-cicd-app.tar
 database/.env
 
 monitoring/.env
+
+# Environment and secret files
+.env
+.env.*
+!.env.example
+
+# Java build files
+*.class
+
+# Private keys
+*.pem
+*.key
