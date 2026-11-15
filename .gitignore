@@ -5,3 +5,5 @@ target/
 devops-cicd-app.tar
 
 database/.env
+
+monitoring/.env
