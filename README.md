@@ -1,187 +1,213 @@
-\# End-to-End DevOps CI/CD Pipeline Using Jenkins, Docker, Kubernetes, AWS S3, and Terraform
+# End-to-End DevOps CI/CD Project – Jenkins, Docker, Kubernetes, AWS, Ansible & Monitoring
 
+## Project Overview
 
+This project demonstrates an end-to-end DevOps workflow for building, containerizing, deploying, monitoring, and managing a Java-based Employee Management application.
 
-\## Project Overview
+The project integrates Jenkins CI/CD automation, Maven, Docker, Kubernetes, PostgreSQL, Ansible, Prometheus, and Grafana. AWS S3 and Terraform are also included for artifact storage and infrastructure provisioning.
 
+The application supports employee record creation and retrieval using PostgreSQL.
 
-
-This project demonstrates an automated Continuous Integration and Continuous Deployment (CI/CD) pipeline for a Java web application using Jenkins, Maven, Docker, and Kubernetes. AWS S3 is used to store build artifacts, while Terraform manages the S3 bucket infrastructure.
-
-
-
-The pipeline automates application building, artifact storage, Docker image creation, and Kubernetes deployment.
-
-
-
-\## Technologies Used
-
-
-
-\- \*\*Jenkins\*\* — CI/CD automation
-
-\- \*\*Java 21\*\* — Java development environment
-
-\- \*\*Apache Maven\*\* — Application build and packaging
-
-\- \*\*Docker\*\* — Container image creation
-
-\- \*\*Kubernetes\*\* — Application deployment and management
-
-\- \*\*AWS S3\*\* — Build artifact storage
-
-\- \*\*Terraform\*\* — Infrastructure as Code (IaC)
-
-\- \*\*AWS IAM\*\* — Access control for S3
-
-\- \*\*Git and GitHub\*\* — Source code management
-
-
-
-\## Architecture
-
-
-## Architecture Diagram
+## Architecture
 
 ```mermaid
 flowchart TD
-    A[GitHub Repository] --> B[Jenkins CI/CD Pipeline]
+    A[GitHub Repository] --> B[Jenkins CI/CD]
     B --> C[Maven Build]
     C --> D[ROOT.war]
-    D --> E[AWS S3 Artifact Storage]
-    D --> F[Docker Image Build]
-    F --> G[Kubernetes Deployment]
-    G --> H[Running Java Web Application]
-    I[Terraform] -. provisions .-> E
+    D --> E[Docker Image]
+    E --> F[Kubernetes Deployment]
+    F --> G[Java Employee Application]
+    G --> H[PostgreSQL Database]
+
+    I[Ansible] --> J[Container Health Checks]
+    J --> E
+    J --> H
+
+    K[cAdvisor] --> L[Prometheus]
+    L --> M[Grafana Dashboards & Alerts]
+
+    N[Terraform] --> O[AWS S3]
+    D --> O
 ```
 
+## Technologies Used
 
+| Technology | Purpose |
+|---|---|
+| Java | Application development |
+| Apache Maven | Build and packaging |
+| Apache Tomcat | Application server |
+| Jenkins | CI/CD automation |
+| Git & GitHub | Source code management |
+| Docker | Containerization |
+| Kubernetes | Container orchestration |
+| PostgreSQL | Relational database |
+| Ansible | Configuration and health checks |
+| Prometheus | Metrics collection |
+| Grafana | Monitoring and alerting |
+| cAdvisor | Container resource monitoring |
+| AWS S3 | Build artifact storage |
+| Terraform | Infrastructure as Code |
+| AWS IAM | Access management |
 
+## Application Features
 
-\## CI/CD Workflow
+The Employee Management System provides:
 
+- Add employee records.
+- Retrieve employee records from PostgreSQL.
+- Display employee information in a JSP web interface.
+- Connect Java to PostgreSQL using JDBC.
+- Use environment variables for database configuration.
 
+### Database Configuration
 
-1\. \*\*Source Code Management:\*\* The Java application is maintained in GitHub.
+The application uses:
 
-2\. \*\*Continuous Integration:\*\* Jenkins retrieves the source code and runs the pipeline.
+- Database: `devopsdb`
+- Table: `employees`
+- Username: Configured through `DB_USER`
+- Password: Configured through `DB_PASSWORD`
+- Connection URL: Configured through `DB_URL`
 
-3\. \*\*Application Build:\*\* Maven compiles and packages the application into `ROOT.war`.
+Example Docker database hostname:
 
-4\. \*\*Artifact Storage:\*\* Jenkins uploads the WAR file to an AWS S3 bucket.
+`jdbc:postgresql://devops-postgres:5432/devopsdb`
 
-5\. \*\*Docker Image Creation:\*\* Docker packages the application into a container image.
+## CI/CD Pipeline
 
-6\. \*\*Kubernetes Image Import:\*\* The Docker image is imported into the local Docker Desktop Kubernetes cluster.
+The Jenkins pipeline automates:
 
-7\. \*\*Deployment:\*\* Kubernetes restarts the application deployment and verifies rollout status.
+1. Source code checkout from GitHub.
+2. Tool and environment validation.
+3. Maven application build.
+4. Docker image creation.
+5. Importing the image into the Kubernetes environment.
+6. Kubernetes configuration validation.
+7. Application deployment.
+8. Deployment verification.
 
-8\. \*\*Application Verification:\*\* The deployed application is accessed locally through Kubernetes port forwarding.
+## Docker
 
+Docker is used to containerize the Java application and run supporting services.
 
+The project uses containers for:
 
-\## AWS S3 and Terraform
+- Java application.
+- PostgreSQL.
+- Prometheus.
+- Grafana.
+- cAdvisor.
 
+Docker networking enables the application container to communicate with PostgreSQL using the database container name.
 
+## Kubernetes
 
-Terraform manages the S3 bucket configuration, including:
+The application is deployed to a local Kubernetes cluster.
 
+Implemented components:
 
+- Kubernetes Deployment.
+- Two application replicas.
+- Kubernetes Service.
+- NodePort service configuration.
+- Application deployment verification.
+- Port forwarding for local access.
 
-\- S3 bucket creation
+## Ansible Automation
 
-\- Public access blocking
+Ansible is used to automate application and database health checks.
 
-\- Default server-side encryption using SSE-S3 (AES-256)
+The playbook `ansible/check-containers.yml`:
 
-\- Resource tagging
+- Checks application container information.
+- Verifies the application container is running.
+- Tests the application HTTP endpoint.
+- Checks PostgreSQL container information.
+- Verifies PostgreSQL health.
 
+## Monitoring and Alerting
 
+Prometheus, Grafana, and cAdvisor provide container monitoring.
 
-The S3 bucket stores build artifacts under the `artifacts/` prefix.
+**Prometheus**
+- Collects monitoring metrics.
+- Scrapes Prometheus and cAdvisor endpoints.
 
+**Grafana**
+- Visualizes monitoring metrics.
+- Provides dashboards.
+- Supports alert rules and email notifications.
 
+**cAdvisor**
+- Collects Docker container resource metrics.
 
-\## Security
+## AWS S3 and Terraform
 
+Terraform is used to manage AWS S3 infrastructure.
 
+The infrastructure configuration includes:
 
-\- S3 public access is blocked.
+- S3 bucket provisioning.
+- Public access blocking.
+- Server-side encryption.
+- Resource tagging.
 
-\- Default S3 server-side encryption is enabled.
+AWS S3 is used for build artifact storage.
 
-\- An IAM user and a dedicated policy provide scoped S3 permissions.
+## Security Practices
 
-\- AWS credentials are stored in Jenkins Credentials rather than hardcoded in the Jenkinsfile.
+- Database credentials are supplied through environment variables.
+- Monitoring credentials are kept in a local `.env` file.
+- Sensitive environment files are excluded through `.gitignore`.
+- AWS credentials are stored in Jenkins Credentials.
+- S3 public access is blocked.
+- S3 server-side encryption is enabled.
+- Terraform state and secrets are not committed to GitHub.
 
-\- Terraform state files and AWS credentials must not be committed to GitHub.
+## Verification Results
 
+The following project components have been tested:
 
+| Component | Verification |
+|---|---|
+| Jenkins | Pipeline build #16 successful |
+| Docker | Application container running |
+| Kubernetes | Two application pods running |
+| PostgreSQL | Database healthy |
+| JDBC | Employee records retrieved successfully |
+| Employee INSERT | New employee successfully added |
+| Ansible | All five playbook tasks passed |
+| Prometheus | Container running |
+| Grafana | Container running; notification tested |
+| cAdvisor | Container healthy |
 
-\## Verification
+### Database Test
 
+Example employee records:
 
+| ID | Name | Department |
+|---:|---|---|
+| 1 | Vidya | DevOps |
+| 2 | Rahul | Testing |
+| 3 | Ananya | Cloud |
 
-The following have been verified during project implementation:
+## Future Improvements
 
+- Integrate GitHub webhooks.
+- Add automated integration testing.
+- Introduce vulnerability scanning.
+- Deploy the application to Amazon EKS.
+- Improve monitoring dashboards and alert coverage.
+- Automate infrastructure deployment.
 
+## Author
 
-\- Maven builds the application successfully.
+**Vidyashree K**
 
-\- Jenkins pipeline completes successfully.
+AWS Cloud & DevOps Engineer
 
-\- Docker image is built.
+GitHub: https://github.com/vidyashreekrishnamurthy
 
-\- Kubernetes deployment rollout completes successfully.
-
-\- The application is accessible through the local Kubernetes service.
-
-\- The `ROOT.war` artifact is uploaded to the S3 bucket.
-
-
-
-\## Key Learning Outcomes
-
-
-
-\- Building an end-to-end CI/CD pipeline
-
-\- Automating Java application builds with Maven
-
-\- Containerizing applications using Docker
-
-\- Deploying and managing applications with Kubernetes
-
-\- Storing build artifacts in AWS S3
-
-\- Provisioning AWS infrastructure using Terraform
-
-\- Applying IAM permissions and basic cloud security practices
-
-\- Troubleshooting CI/CD pipeline and deployment issues
-
-
-
-\## Future Improvements
-
-
-
-\- Configure a GitHub webhook for automatic pipeline triggering.
-
-\- Add automated unit and integration tests.
-
-\- Introduce code quality and vulnerability scanning.
-
-\- Deploy to a managed Kubernetes service such as Amazon EKS.
-
-\- Add monitoring and alerting.
-
-
-
-\## Author
-
-
-Vidyashree K
-
-
-DevOps CI/CD Learning Project
+LinkedIn: https://linkedin.com/in/vidyashree-krishnamurthy-32269724b/
