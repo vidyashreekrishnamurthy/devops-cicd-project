@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +42,7 @@ public class EmployeeServlet extends HttpServlet {
             request.getRequestDispatcher("/employees.jsp")
                    .forward(request, response);
 
-        } catch (Exception e) {
+        } catch (SQLException e) {
             throw new ServletException("Unable to retrieve employees.", e);
         }
     }
@@ -72,7 +73,7 @@ public class EmployeeServlet extends HttpServlet {
 
             response.sendRedirect(request.getContextPath() + "/employees");
 
-        } catch (Exception e) {
+        } catch (SQLException e) {
             throw new ServletException("Unable to add employee.", e);
         }
     }

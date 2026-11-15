@@ -2,7 +2,7 @@
 <%@ page import="java.util.List" %>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <title>Employee Management - DevOps Project</title>
     <style>
@@ -57,8 +57,24 @@
 <h2>Add Employee</h2>
 
 <form action="<%= request.getContextPath() %>/employees" method="post">
-    <input type="text" name="name" placeholder="Employee Name" required>
-    <input type="text" name="department" placeholder="Department" required>
+    <label for="employee-name">Employee Name:</label>
+    <input
+        type="text"
+        id="employee-name"
+        name="name"
+        placeholder="Employee Name"
+        required
+    >
+
+    <label for="employee-department">Department:</label>
+    <input
+        type="text"
+        id="employee-department"
+        name="department"
+        placeholder="Department"
+        required
+    >
+
     <button type="submit">Add Employee</button>
 </form>
 
